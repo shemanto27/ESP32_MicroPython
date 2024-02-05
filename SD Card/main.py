@@ -1,55 +1,51 @@
-# More details can be found in TechToTinker.blogspot.com 
-# George Bantique | tech.to.tinker@gmail.com
+# Import necessary modules
+import machine  # MicroPython's machine module for hardware control
+import sdcard   # MicroPython's sdcard module for SD card support
+import os       # MicroPython's os module for filesystem operations
 
-import os
-from machine import Pin, SoftSPI
-from sdcard import SDCard
+# Initialize SPI for SD Card
+# SPI is a communication protocol used to communicate with devices like the SD card
+sd = sdcard.SDCard(machine.SPI(2), machine.Pin(5))
 
-# Pin assignment:
-# MISO -> GPIO 13
-# MOSI -> GPIO 12
-# SCK  -> GPIO 14
-# CS   -> GPIO 27
-spisd = SoftSPI(-1, miso=Pin(13), mosi=Pin(12), sck=Pin(14))
-sd = SDCard(spisd, Pin(27))
-
-print('Root directory:{}'.format(os.listdir()))
+# Mount SD Card as a filesystem
+# Mounting is like connecting the SD card to the MicroPython system, so we can read and write to it
 vfs = os.VfsFat(sd)
-os.mount(vfs, '/sd')
-print('Root directory:{}'.format(os.listdir()))
-os.chdir('sd')
-print('SD Card contains:{}'.format(os.listdir()))
+os.mount(vfs, "/fc")  # "/fc" is a folder name we give to our mounted SD card
+print("Filesystem check")
+print(os.listdir("/fc"))  # List the contents of the SD card
 
+# File path for a one-line log file
+fn = "/fc/one-line-log.txt"
+print("\nSingle block write")
+# Open the file for writing and write a line of text to it
+with open(fn, "w") as f:
+    n = f.write("1234567890\n")  # one block
+    print(n, "bytes written")
 
-# 1. To read file from the root directory:
-# f = open('sample.txt', 'r')
-# print(f.read())
-# f.close()
+fn = "/fc/one-line-log.txt"
+print("\nSingle block read")
+# Open the file for reading and read its content
+with open(fn, "r") as f:
+    result = f.read()
+    print(len(result), "bytes read")
+    print()
+    print(result)
 
-# 2. To create a new file for writing:
-# f = open('sample2.txt', 'w')
-# f.write('Some text for sample 2')
-# f.close()
+# Create a long line of text for a multi-line log file
+line = "abcdefghijklmnopqrstuvwxyz\n"
+lines = line * 200  # Repeat the line 200 times to make a longer text
+fn = "/fc/multi-line-log.txt"
+print("\nMultiple block write")
+# Open the file for writing and write the long text to it
+with open(fn, "w") as f:
+    n = f.write(lines)
+    print(n, "bytes written")
 
-# 3. To append some text in the existing file:
-# f = open('sample3.txt', 'a')
-# f.write('Some text for sample 3')
-# f.close()
-
-# 4. To delete a file:
-# os.remove('file to delete')
-
-# 5. To list all directories and files:
-# os.listdir()
-
-# 6. To create a new folder:
-# os.mkdir('sample folder')
-
-# 7. To change directory:
-# os.chdir('directory you want to open')
-
-# 8. To delete a folder:
-# os.rmdir('folder to delete')
-
-# 9. To rename a file or a folder:
-# os.rename('current name', 'desired name')
+fn = "/fc/multi-line-log.txt"
+print("\nMultiple block read")
+# Open the file for reading and read its content
+with open(fn, "r") as f:
+    result2 = f.read()
+    print(len(result2), "bytes read")
+    print()
+    print(result2)
