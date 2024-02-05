@@ -21,16 +21,15 @@ while True:
         t = sensor.temperature()
         h = sensor.humidity()
         time_tuple = localtime()
-        fn = "/fc/data-logger.txt"
+        fn = "/fc/data-logger.csv"
         
         # Open the file for appending and write a line of text to it
         with open(fn, "a") as f:
-            f.write("\nLocal time: {}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
+            f.write("{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d},".format(
                 time_tuple[0], time_tuple[1], time_tuple[2],
                 time_tuple[3], time_tuple[4], time_tuple[5]))
-            f.write("\ntemp=" + str(t))
-            f.write("\nhumidity=" + str(h))
-            f.write("")  # Add an empty line to separate entries
+            f.write("{:.2f},".format(t))
+            f.write("{:.2f}\n".format(h))
 
         sleep(2)
 
