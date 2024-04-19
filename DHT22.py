@@ -1,3 +1,4 @@
+# code written by Shemanto Sharkar (let's connect on LinkedIn: https://www.linkedin.com/in/shemanto/)
 #step-1: impoting necessary modules
 from machine import Pin
 from utime import sleep
